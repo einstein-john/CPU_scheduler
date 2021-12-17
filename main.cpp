@@ -1,11 +1,14 @@
 #include <iostream>
 #include <cstdlib>
-#include <stdlib.h>
-#include <string.h>
-using namespace std;
 
-int menuFunction(string,string);
-int modeMenuFunction();
+using namespace std;
+struct Node{
+    float bt,wt,at;
+    struct node *next;
+};
+
+int mainMenuFunction(string,string);
+int schedulingModeMenu();
 
 int main(int argc, char const *argv[]) {
 
@@ -19,32 +22,38 @@ int main(int argc, char const *argv[]) {
     schedulerMode.assign("NONE");
     while (menu == false) {
 
-        Option = menuFunction(schedulerMode,preemptiveModeSTR);
+        Option = mainMenuFunction(schedulerMode,preemptiveModeSTR);//load main menu
 
         switch (Option) {
             case 1:
-                    modeChoice = modeMenuFunction();
+                modeChoice = schedulingModeMenu();//load scheduling menu
                 if(modeChoice == 1){
                     schedulerMode.assign("FCFS Scheduler");
-                }
+                }//set scheduling mode to FCFS
                 else if(modeChoice == 2){
                     schedulerMode.assign("SJF Scheduler");
-                }
+                }//set scheduling mode to SJF
                 else if(modeChoice == 3){
                     schedulerMode.assign("Priority Scheduler");
-                }
+                }//set scheduling mode to Priority scheduler
                 else if(modeChoice == 4){
                     schedulerMode.assign("RR Scheduler");
-                }
+                }//set scheduling mode to RR
                 else {
                     cout << "Enter a valid option"<<endl;
-                modeChoice = modeMenuFunction();
-                }
+                    modeChoice = schedulingModeMenu();
+                }//if scheduling option doesn't exist loop the scheduling menu
                 break;
             case 2:
                 if (modeChoice == 1){
-                      preemptiveModeSTR.assign("OFF");
-                }else
+                    cout<<"Selected mode doesn't support Preemptive mode"<<endl;
+                    preemptiveModeSTR.assign("OFF");
+                }//if FCFS is selected turn off preemptive mode
+                else if (modeChoice == 4){
+                    cout<<"Selected mode doesn't support Preemptive mode"<<endl;
+                    preemptiveModeSTR.assign("OFF");
+                }//if SJF is selected turn off preemptive mode
+                else
                 {
                     cout<<"==========[Preemptive mode(ON/OFF)]=========="<<endl;
                     cout<<"1) ON"<<endl;
@@ -60,24 +69,25 @@ int main(int argc, char const *argv[]) {
                         default:
                             cout<<"Enter a valid option";
 
-                    }
+                    }//turn preemptive mode
                 }
                 break;
-            case 3:
+            case 3://show the result on the console
                 break;
-            case 4:
+            case 4://exit the program and calculate the result
                 cout << endl <<"CPU Scheduling Simulator has been exited" << '\n';
+                menu=true;
                 exit(1);
                 break;
-            default:
+            default://if main menu option does not exist run the loop again
                 cout << "Enter an option in the menu" << '\n';
-                menu=true;
+
         }
     }
     return 0;
 }
 
-int menuFunction(string mode,string PEMode){
+int mainMenuFunction(string mode,string PEMode){
     int menuChoice;
     cout << "==========[ CPU Scheduler Simulator ]==========" << '\n';
     cout << "1) Scheduling Mode (" <<mode<<")"<< '\n';
@@ -89,7 +99,7 @@ int menuFunction(string mode,string PEMode){
     return menuChoice;
 }
 
-int modeMenuFunction(){
+int schedulingModeMenu(){
     int Choice;
     cout << "******** CPU Scheduler Simulator MODE ********" << '\n';
     cout << "1) First Come First Serve (FCFS) Scheduler "<< '\n';
