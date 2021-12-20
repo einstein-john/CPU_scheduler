@@ -1,25 +1,33 @@
 #include <iostream>
+#include "LinkedList.cpp"
 #include <cstdlib>
 
 using namespace std;
-struct Node{
-    float bt,wt,at;
-    struct node *next;
-};
-
+node *header;
 int mainMenuFunction(string,string);
 int schedulingModeMenu();
 
+
 int main(int argc, char const *argv[]) {
 
-    int Option;
-    int modeChoice;
-    int preemptiveModeInt;
+    header = NULL;
+    header = insertFront(header,5);
+    header = insertFront(header,1);
+    header = insertFront(header,2);
+    header = insertFront(header,1);
+    header = insertFront(header,10);
+
+    int Option = 0;
+    int modeChoice = 0;
+    int preemptiveModeInt = 0;
+    int pID = 1;
     bool menu = false;
     string preemptiveModeSTR;
     string schedulerMode;
     preemptiveModeSTR.assign("OFF");
     schedulerMode.assign("NONE");
+
+
     while (menu == false) {
 
         Option = mainMenuFunction(schedulerMode,preemptiveModeSTR);//load main menu
@@ -73,6 +81,21 @@ int main(int argc, char const *argv[]) {
                 }
                 break;
             case 3://show the result on the console
+                if (modeChoice == 1){
+                    long wt = 0;
+                    float avgWT;
+                    cout<<"Process scheduling method: "<<schedulerMode<<endl;
+                    cout<<"Processes waiting time: "<<endl;
+                    while (NULL != header) {
+                        cout<<"P"<<pID<<".)  "<< wt << endl;
+                        wt = wt + header->data;
+                        header = header->next;
+                        avgWT =  + avgWT;
+                    }
+                    cout<<avgWT<<endl;
+                    cout<<"Average waiting time: "<<avgWT/pID<<endl;
+                }
+                menu = true;
                 break;
             case 4://exit the program and calculate the result
                 cout << endl <<"CPU Scheduling Simulator has been exited" << '\n';
@@ -110,3 +133,4 @@ int schedulingModeMenu(){
     cin >> Choice;
     return Choice;
 }
+
