@@ -16,11 +16,15 @@ int main(int argc, char const *argv[]) {
     header = insertFront(header,2);
     header = insertFront(header,1);
     header = insertFront(header,10);
+    node *temp;
+   temp = sortList();
 
     int Option = 0;
     int modeChoice = 0;
     int preemptiveModeInt = 0;
-    int pID = 1;
+    double pID = 1.0;
+    double wt = 0;
+    double avgWT = 0;
     bool menu = false;
     string preemptiveModeSTR;
     string schedulerMode;
@@ -82,18 +86,40 @@ int main(int argc, char const *argv[]) {
                 break;
             case 3://show the result on the console
                 if (modeChoice == 1){
-                    long wt = 0;
-                    float avgWT;
+
                     cout<<"Process scheduling method: "<<schedulerMode<<endl;
                     cout<<"Processes waiting time: "<<endl;
                     while (NULL != header) {
+                        avgWT = wt+ avgWT;
+
                         cout<<"P"<<pID<<".)  "<< wt << endl;
+                        pID++;
+
                         wt = wt + header->data;
                         header = header->next;
-                        avgWT =  + avgWT;
+
                     }
-                    cout<<avgWT<<endl;
-                    cout<<"Average waiting time: "<<avgWT/pID<<endl;
+                    pID = pID - 1;
+                    avgWT = avgWT/pID;
+                    cout<<"Average waiting time: "<<avgWT<<endl;
+                }
+                if(modeChoice == 2){
+
+                    cout<<"Process scheduling method: "<<schedulerMode<<endl;
+                    cout<<"Processes waiting time: "<<endl;
+                    while (NULL != header) {
+                        avgWT = wt+ avgWT;
+
+                        cout<<"P"<<pID<<".)  "<< wt << endl;
+                        pID++;
+
+                        wt = wt + header->data;
+                        header = header->next;
+
+                    }
+                    pID = pID - 1;
+                    avgWT = avgWT/pID;
+                    cout<<"Average waiting time: "<<avgWT<<endl;
                 }
                 menu = true;
                 break;
