@@ -16,8 +16,7 @@ int main(int argc, char const *argv[]) {
     header = insertFront(header,2);
     header = insertFront(header,1);
     header = insertFront(header,10);
-    node *temp;
-   temp = sortList();
+    
 
     int Option = 0;
     int modeChoice = 0;
@@ -75,7 +74,7 @@ int main(int argc, char const *argv[]) {
                         case 1:
                             preemptiveModeSTR.assign("ON");
                             break;
-                        case 2:
+                        case 0:
                             preemptiveModeSTR.assign("OFF");
                             break;
                         default:
@@ -101,10 +100,13 @@ int main(int argc, char const *argv[]) {
                     }
                     pID = pID - 1;
                     avgWT = avgWT/pID;
-                    cout<<"Average waiting time: "<<avgWT<<endl;
+                    cout<<"Average waiting time: "<<avgWT<<endl<<endl;
+                    menu = true;
                 }
-                if(modeChoice == 2){
-
+                else if (modeChoice == 2 && preemptiveModeInt == 0)
+                {
+                    sortList(header);
+                    
                     cout<<"Process scheduling method: "<<schedulerMode<<endl;
                     cout<<"Processes waiting time: "<<endl;
                     while (NULL != header) {
@@ -120,8 +122,20 @@ int main(int argc, char const *argv[]) {
                     pID = pID - 1;
                     avgWT = avgWT/pID;
                     cout<<"Average waiting time: "<<avgWT<<endl;
+                    menu = true;
                 }
-                menu = true;
+                else if (modeChoice == 2 && preemptiveModeInt == 1)
+                {
+                    sortList(header);
+                }
+                
+                else{
+                    cout<<"Select the right options"<<endl;
+                    menu = false;
+                }
+
+                
+                //menu = true;
                 break;
             case 4://exit the program and calculate the result
                 cout << endl <<"CPU Scheduling Simulator has been exited" << '\n';
@@ -159,4 +173,3 @@ int schedulingModeMenu(){
     cin >> Choice;
     return Choice;
 }
-
