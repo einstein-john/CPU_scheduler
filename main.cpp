@@ -1,51 +1,63 @@
 #include <iostream>
-//#include "LinkedList.cpp"
 #include <cstdlib>
+
 using namespace std;
 
 struct node{
-    long burstTime;
-	long priority;
+    double burstTime;
+    double arivalTime;
+	double priority;
     struct node * next;
 };
 
 
 node *header;
 
-
-int is_emptyll(struct node *);
-void displayll(struct node *);
-struct node *newnode(long, long);
-struct node * insertFront(struct node *, long ,long);
-struct node * insertBack(struct node *, long ,long);
-void insertAfter(struct node *, long);
-struct node *sortList(struct node *);
-struct node *sortPriority(struct node *);
-int mainMenuFunction(string,string);
-int schedulingModeMenu();
-
-
-int main(int argc, char const *argv[]) {
-
-    header = NULL;
-    header = insertFront(header,5,3);
-    header = insertFront(header,1,1);
-    header = insertFront(header,2,4);
-    header = insertFront(header,1,5);
-    header = insertFront(header,10,2);
-    
-    
-
     int Option = 0;
     int modeChoice = 0;
     int preemptiveModeInt = 0;
-    int quantum = 2;
+    int quantum = 6;
     double pID = 1.0;
     double wt = 0;
     double avgWT = 0;
     bool menu = false;
     string preemptiveModeSTR;
     string schedulerMode;
+
+
+int list_is_empty(struct node *);
+void displaylist(struct node *);
+struct node *newnode(double, double,double);
+struct node * insertFront(struct node *, double ,double,double);
+struct node * insertBack(struct node *, double ,double,double);
+void insertAfter(struct node *, double,double,double);
+struct node *sortList(struct node *);
+struct node *sortPriority(struct node *);
+struct node *sortArivalTime(struct node *);
+int mainMenuFunction(string,string);
+int schedulingModeMenu();
+void roundRobinResult(struct node *);
+
+
+void roundrobinSM(const node *temp);
+
+void FCFSResult(node *temp);
+
+void SJF_NonePreemptiveResult(node *temp);
+
+void FCFSschedulingMethod(const node *temp);
+
+int main(int argc, char const *argv[]) {
+
+    header = NULL;
+    header = insertFront(header,5,4,2);
+    header = insertFront(header,10,3,5);
+    header = insertFront(header,2,2,4);
+    header = insertFront(header,1,1,1);
+    header = insertFront(header,10,0,3);
+   
+    
+
     preemptiveModeSTR.assign("OFF");
     schedulerMode.assign("NONE");
 
@@ -86,8 +98,8 @@ int main(int argc, char const *argv[]) {
                 else
                 {
                     cout<<"==========[Preemptive mode(ON/OFF)]=========="<<endl;
+                    cout<<"0) OFF"<<endl;
                     cout<<"1) ON"<<endl;
-                    cout<<"2) OFF"<<endl;
                     cin>>preemptiveModeInt;
                     switch (preemptiveModeInt) {
                         case 1:
@@ -103,70 +115,26 @@ int main(int argc, char const *argv[]) {
                 }
                 break;//trun preemptive mode on/off
             case 3:
-                if (modeChoice == 1)
+                if (modeChoice == 1)//FCFS scheduling
                 {
                         node *temp = header;
                     cout<<"Process scheduling method: "<<schedulerMode<<endl;
                     cout<<"Processes waiting time: "<<endl;
-                    while (NULL != temp) {
-                        avgWT = wt+ avgWT;
-
-                        cout<<"P"<<pID<<".)  "<< wt << endl;
-                        pID++;
-
-                        wt = wt + temp->burstTime;
-                        temp = temp->next;
-
-                    }
-                    pID = pID - 1;
-                    avgWT = avgWT/pID;
-                    cout<<"Average waiting time: "<<avgWT<<endl<<endl;
+                    FCFSResult(temp);
                     menu = true;
                 }
-                else if (modeChoice == 2 && preemptiveModeInt == 0)
+                else if (modeChoice == 2 && preemptiveModeInt == 0)//none preemptive priority scheduling
                 {   node *temp = header;
                     sortList(temp);
-                    
-                    cout<<"Process scheduling method: "<<schedulerMode<<endl;
-                    cout<<"Processes waiting time: "<<endl;
-                    while (NULL != temp) {
-                        avgWT = wt+ avgWT;
 
-                        cout<<"P"<<pID<<".)  "<< wt << endl;
-                        pID++;
-
-                        wt = wt + temp->burstTime;
-                        temp = temp->next;
-
-                    }
-                    pID = pID - 1;
-                    avgWT = avgWT/pID;
-                    cout<<"Average waiting time: "<<avgWT<<endl;
+                    SJF_NonePreemptiveResult(temp);
                     menu = true;
                 }
                 else if (modeChoice == 2 && preemptiveModeInt == 1)
-                {   node *temp = header;
-                    sortList(temp);
-                    displayll(temp);
+                {   
                     
-                    cout<<"Process scheduling method: "<<schedulerMode<<endl;
-                    cout<<"Processes waiting time: "<<endl;
-                    while (NULL != temp) {
-                        avgWT = wt+ avgWT;
-
-                        cout<<"P"<<pID<<".)  "<< avgWT << endl;
-                        pID++;
-
-                        wt = wt + temp->burstTime;
-                        temp = temp->next;
-
-                    }
-                    pID = pID - 1;
-                    avgWT = avgWT/pID;
-                    cout<<"Average waiting time: "<<avgWT<<endl;
-                    menu = true;
                 }
-                else if (modeChoice == 3 && preemptiveModeInt == 0)
+                else if (modeChoice == 3 && preemptiveModeInt == 0)//none preemptive priority scheduling
                 { 
                     node *temp = header;
                     sortPriority(temp);
@@ -193,19 +161,14 @@ int main(int argc, char const *argv[]) {
                 {
                     
                 }
-                else if(modeChoice == 4 && preemptiveModeInt == 0)
+                else if(modeChoice == 4 && preemptiveModeInt == 0)//round robin scheduling
                 {
-                        node *temp = header,*rem_bt = temp;
-displayll(rem_bt);
+                        node *temp = header;
+                        displaylist(temp);
                     cout<<"Process scheduling method: "<<schedulerMode<<endl;
-                    cout<<"Processes waiting time: "<<endl;
-                        while (rem_bt != NULL)
-                        {   
-                        }
-                        pID = pID - 1;
-                    avgWT = avgWT/pID;
-                    cout<<"Average waiting time: "<<avgWT<<endl;
-                   
+                    cout<<"Processes waiting time: "<<endl; 
+                            node *temporary = header;
+                            roundRobinResult(temporary);
                     menu = true;
 
                 }        
@@ -229,74 +192,114 @@ displayll(rem_bt);
     return 0;
 }
 
-int is_emptyll(struct node *header){
-	if(header==NULL)
+void SJF_NonePreemptiveResult(node *temp) {
+    cout << "Process scheduling method: " << schedulerMode << endl;
+    cout<<"Processes waiting time: "<<endl;
+    while (NULL != temp) {
+        avgWT = wt+ avgWT;
+
+        cout<<"P"<<pID<<".)  "<< wt << endl;
+        pID++;
+
+        wt = wt + temp->burstTime;
+        temp = temp->next;
+
+    }
+    pID = pID - 1;
+    avgWT = avgWT/pID;
+    cout<<"Average waiting time: "<<avgWT<<endl;
+}
+
+void FCFSResult(node *temp) {
+    while (NULL != temp) {
+
+        cout<<"P"<<pID<<".)  "<< wt << endl;
+        pID++;
+
+        FCFSschedulingMethod(temp);
+
+        temp = temp->next;
+
+    }
+    pID = pID - 1;
+    avgWT = avgWT/pID;
+    cout<<"Average waiting time: "<<avgWT<<endl<<endl;
+}
+
+void FCFSschedulingMethod(const node *temp) {
+    avgWT = wt + avgWT;
+
+    wt = wt + temp->burstTime;
+}
+
+int list_is_empty(struct node *header){
+	if(header == NULL)
 		return 1;
 	else
 		return 0;
 }
 
-void displayll(struct node *header){
-	struct node * Htemp;
-	Htemp=header;
+void displaylist(struct node *header){
+	struct node *Htemp;
+	Htemp = header;
 	//cout<<"Linked list is: ";
-	while(Htemp!=NULL){
-		cout<<Htemp->burstTime;
+	while(Htemp != NULL){
+		cout<<Htemp->burstTime<<" ";
+        cout<<Htemp->arivalTime<<" ";
 		cout<<Htemp->priority<<" \n";
-		Htemp=Htemp->next;
+		Htemp = Htemp->next;
 	}
 	cout<<endl;
 
 }
 
-struct node *newnode(long bt, long pt){
+struct node *newnode(double bt, double at, double pt){
 	struct node *temp;
 	temp=(struct node*) malloc(sizeof(node));
 	temp->burstTime = bt;
+    temp->arivalTime = at;
 	temp->priority = pt;
-	temp->next=NULL;
+	temp->next = NULL;
 	return temp;
 }
 
-struct node * insertFront(struct node *header, long bt,long pt){
+struct node * insertFront(struct node *header, double bt,double at,double pt){
 	struct node *temp;
-	temp=newnode(bt,pt);
-	temp->next=header;
-	header=temp;
+	temp=newnode(bt, at, pt);
+	temp->next = header;
+	header = temp;
 	return header;
 }
 
-struct node * insertBack(struct node *header, long d,long pt){
+struct node * insertBack(struct node *header, double bt, double at, double pt){
 	struct node *temp, *Htemp;
-	temp=newnode(d,pt);
-	if(is_emptyll(header)){
-		header=temp;
+	temp = newnode(bt, at, pt);
+	if(list_is_empty(header)){
+		header = temp;
 		return header;
 	}
-	Htemp=header;
-	while(Htemp->next!=NULL)
+	Htemp = header;
+	while(Htemp->next != NULL)
 		Htemp = Htemp->next;
-	Htemp->next=temp;
+	Htemp->next = temp;
 	
 	return header;
 }
 
-void insertAfter(struct node *afterNode, long d,long pt){
+void insertAfter(struct node *afterNode, double bt, double at,double pt){
 	struct node *temp;
-	temp=newnode(d,pt);
-	temp->next=afterNode->next;
-	afterNode->next=temp;
+	temp = newnode(bt, at, pt);
+	temp->next = afterNode->next;
+	afterNode->next = temp;
 }
 
 struct node *sortList(struct node *current) {
     //Node current will point to head
-
-
     struct node *index = NULL;
     int temp;
 
-    if(is_emptyll(current)) {
-        return index;
+    if(list_is_empty(current)) {
+        return current;
     }
     else {
         while(current != NULL) {
@@ -304,7 +307,7 @@ struct node *sortList(struct node *current) {
             index = current->next;
 
             while(index != NULL) {
-                //If current node's data is greater than index's node data, swap the data between them
+                //If current node's burst time is greater than index's node burst time, swap the burst time between them
                 if(current->burstTime > index->burstTime) {
                     temp = current->burstTime;
                     current->burstTime = index->burstTime;
@@ -319,13 +322,11 @@ struct node *sortList(struct node *current) {
 
 struct node *sortPriority(struct node *current) {
     //Node current will point to head
-
-
     struct node *index = NULL;
     int tempBT,tempPT;
 
-    if(is_emptyll(current)) {
-        return index;
+    if(list_is_empty(current)) {
+        return current;
     }
     else {
         while(current != NULL) {
@@ -333,7 +334,7 @@ struct node *sortPriority(struct node *current) {
             index = current->next;
 
             while(index != NULL) {
-                //If current node's data is greater than index's node data, swap the data between them
+                //If current node's priority is greater than index's node priority, swap the priority & burst time between them
                 if(current->priority > index->priority) {
                     tempBT = current->burstTime;
 					tempPT = current->priority;
@@ -341,6 +342,39 @@ struct node *sortPriority(struct node *current) {
 					current->priority = index->priority;
                     index->burstTime = tempBT;
 					index->priority = tempPT;
+                }
+                index = index->next;
+            }
+            current = current->next;
+        }
+    }
+}
+
+struct node *sortArivalTime(struct node *current) {
+    //Node current will point to head
+    struct node *index = NULL;
+    int tempBT,tempAT, tempPT;
+
+    if(list_is_empty(current)) {
+        return current;
+    }
+    else {
+        while(current != NULL) {
+            //Node index will point to node next to current
+            index = current->next;
+
+            while(index != NULL) {
+                //If current node's priority is greater than index's node priority, swap the priority & burst time between them
+                if(current->arivalTime > index->arivalTime) {
+                    tempBT = current->burstTime;
+                    tempAT = current->arivalTime;
+					tempPT = current->priority;
+                    current->burstTime = index->burstTime;
+                    current->arivalTime = index->arivalTime;
+					current->priority = index->priority;
+                    index->burstTime = tempBT;
+					index->priority = tempPT;
+                    index->arivalTime = tempAT;
                 }
                 index = index->next;
             }
@@ -372,4 +406,39 @@ int schedulingModeMenu(){
     cout <<"Select an option:  ";
     cin >> Choice;
     return Choice;
+}
+
+void roundRobinResult(struct node *temp)
+{
+    while (temp != NULL)
+    {
+        roundrobinSM(temp);
+
+        cout<<"P"<<pID<<".)  "<< wt << endl;
+                            temp = temp->next;
+                            pID++;
+                            avgWT += wt;
+                        }
+                        pID = pID - 1;
+                    avgWT = avgWT * (1/pID);
+                    cout<<"Average waiting time: "<<avgWT<<endl;
+                   
+    
+}
+
+void roundrobinSM(const node *temp) {//if current burst time is greater than quantum set waiting time to be quantum
+    if (temp->burstTime >= quantum)
+    {
+       // insertBack(temp,temp->burstTime - quantum,temp->arivalTime,temp->priority);
+
+        wt = quantum;
+     //   temp = temp->next;
+    }
+
+    //if current burst time is less than quantum set waiting time to be burst time
+    else
+    {
+        wt = temp->burstTime;
+   //     temp = temp->next;
+    }
 }
